@@ -26,13 +26,15 @@ public static class Program
         foreach (var row in table)
         {
             Console.Write("[ ");
+            var max = row.Max();
             foreach (var column in row)
             {
-                if (column > 0.5)
+                if (Math.Abs(column - max) < 0.01)
                     Console.ForegroundColor = ConsoleColor.Green;
                 Console.Write($"{column:#00.00%} ");
                 Console.ResetColor();
             }
+
             Console.WriteLine("]");
         }
     }
