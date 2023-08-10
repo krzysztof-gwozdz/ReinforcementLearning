@@ -8,19 +8,14 @@ public class QLearning
     private readonly Random _random = new();
     private readonly IProblem _problem;
 
-    private double[][] QTable { get; } =
-    {
-        new double[] { 0, 0, 0, 0, 0, 0 },
-        new double[] { 0, 0, 0, 0, 0, 0 },
-        new double[] { 0, 0, 0, 0, 0, 0 },
-        new double[] { 0, 0, 0, 0, 0, 0 },
-        new double[] { 0, 0, 0, 0, 0, 0 },
-        new double[] { 0, 0, 0, 0, 0, 0 }
-    };
+    private double[][] QTable { get; }
 
     public QLearning(IProblem problem)
     {
         _problem = problem;
+        QTable = new double[problem.NumberOfStates][];
+        for (var i = 0; i < problem.NumberOfStates; i++)
+            QTable[i] = new double[problem.NumberOfStates];
     }
 
     public void TrainAgent(int numberOfIterations)
