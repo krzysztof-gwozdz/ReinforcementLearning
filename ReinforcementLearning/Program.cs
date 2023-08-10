@@ -41,7 +41,7 @@ public static class Program
     {
         do
         {
-            Console.WriteLine("Enter initial state. Number 0-5. Press 'q' to exit.");
+            Console.WriteLine("Enter initial state. Press 'q' to exit.");
             if (!int.TryParse(Console.ReadLine(), out var initialState))
                 break;
             var qLearningStats = qLearning.Run(initialState);

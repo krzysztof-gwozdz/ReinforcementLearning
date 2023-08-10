@@ -74,14 +74,14 @@ public class QLearning
 
     private int GetBestAction(int currentState)
     {
-        var states = QTable[currentState].Select((x, i) => new { Value = x, Index = i })
-            .Where(x => x.Value != 0)
-            .OrderByDescending(x => x.Value)
+        var states = QTable[currentState].Select((value, index) => new { Value = value, Index = index })
+            .Where(state => state.Value != 0)
+            .OrderByDescending(state => state.Value)
             .ToArray();
         if (!states.Any())
             return GetRandomAction(currentState);
-        var max = states.First().Value;
-        return states.Where(x => Math.Abs(x.Value - max) < 0.1).MinBy(x => _random.Next()).Index;
+        var max = states[0].Value;
+        return states.Where(state => Math.Abs(state.Value - max) < 0.1).MinBy(_ => Guid.NewGuid())!.Index;
     }
 
     private void Learn(int currentState, int action)
