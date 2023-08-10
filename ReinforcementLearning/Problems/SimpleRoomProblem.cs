@@ -36,7 +36,6 @@ public class SimpleRoomProblem : IProblem
         return validActions.ToArray();
     }
 
-
     public bool GoalStateIsReached(int currentState) =>
         currentState == 5;
 }

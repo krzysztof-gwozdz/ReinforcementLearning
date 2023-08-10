@@ -77,9 +77,11 @@ public class QLearning
         var states = QTable[currentState].Select((x, i) => new { Value = x, Index = i })
             .Where(x => x.Value != 0)
             .OrderByDescending(x => x.Value)
-            .Select(x => x.Index)
             .ToArray();
-        return states.Any() ? states.First() : GetRandomAction(currentState);
+        if (!states.Any())
+            return GetRandomAction(currentState);
+        var max = states.First().Value;
+        return states.Where(x => Math.Abs(x.Value - max) < 0.1).MinBy(x => _random.Next()).Index;
     }
 
     private void Learn(int currentState, int action)
