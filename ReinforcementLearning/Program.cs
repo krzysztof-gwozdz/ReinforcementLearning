@@ -6,7 +6,7 @@ public static class Program
 {
     public static void Main()
     {
-        var qLearning = new QLearning(new SimpleRoomProblem());
+        var qLearning = new QLearning(new OpenSpaceProblem());
         Train(qLearning);
         Test(qLearning);
     }
@@ -14,7 +14,7 @@ public static class Program
     private static void Train(QLearning qLearning)
     {
         Console.WriteLine("Training Agent...");
-        qLearning.TrainAgent(10);
+        qLearning.TrainAgent(1000);
         Console.WriteLine("Training is Done!");
         Console.WriteLine("Q table:");
         DisplayQTable(qLearning.GetNormalizedQTable());
