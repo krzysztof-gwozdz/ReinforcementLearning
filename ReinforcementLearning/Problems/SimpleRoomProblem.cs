@@ -7,21 +7,27 @@
 // | 4      | 3      | 2      |
 // |                          |
 // |___  ___|________|________|
-public class SimpleRoomProblem : IProblem
+public class SimpleRoomProblem : IProblem<int, int>
 {
-    private readonly int[][] _rewards =
+    private readonly Random _random = new();
+
+    private readonly double[][] _rewards =
     {
-        new[] { -1, -1, -1, -1, 0, -1 },
-        new[] { -1, -1, -1, 0, -1, 100 },
-        new[] { -1, -1, -1, 0, -1, -1 },
-        new[] { -1, 0, 0, -1, 0, -1 },
-        new[] { 0, -1, -1, 0, -1, -1 },
-        new[] { -1, 0, -1, -1, -1, -1 }
+        new double[] { -1, -1, -1, -1, 0, -1 },
+        new double[] { -1, -1, -1, 0, -1, 100 },
+        new double[] { -1, -1, -1, 0, -1, -1 },
+        new double[] { -1, 0, 0, -1, 0, -1 },
+        new double[] { 0, -1, -1, 0, -1, -1 },
+        new double[] { -1, 0, -1, -1, -1, -1 }
     };
 
-    public int NumberOfStates => _rewards.Length;
+    public int[] States => new[] { 0, 1, 2, 3, 4, 5 };
+    public int[] Actions => new[] { 0, 1, 2, 3, 4, 5 };
 
-    public int GetReward(int currentState, int action) =>
+    public int GetInitialState() => 
+        _random.Next(States.Length);
+
+    public double GetReward(int currentState, int action) =>
         _rewards[currentState][action];
 
     public int[] GetValidActions(int currentState)

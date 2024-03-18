@@ -6,12 +6,12 @@ public static class Program
 {
     public static void Main()
     {
-        var qLearning = new QLearning(new OpenSpaceProblem());
+        var qLearning = new QLearning<int, int>(new OpenSpaceProblem());
         Train(qLearning);
         Test(qLearning);
     }
 
-    private static void Train(QLearning qLearning)
+    private static void Train(QLearning<int, int> qLearning)
     {
         Console.WriteLine("Training Agent...");
         qLearning.TrainAgent(1000);
@@ -39,7 +39,7 @@ public static class Program
         }
     }
 
-    private static void Test(QLearning qLearning)
+    private static void Test(QLearning<int, int> qLearning)
     {
         do
         {

@@ -1,9 +1,10 @@
 ﻿namespace ReinforcementLearning.Problems;
 
-public interface IProblem
+public interface IProblem<TState, TAction> where TState : notnull where TAction : notnull
 {
-    int NumberOfStates { get; }
-    int GetReward(int currentState, int action);
-    int[] GetValidActions(int currentState);
-    bool GoalStateIsReached(int currentState);
+    TState[] States { get; }
+    TAction[] Actions { get; }
+    TState GetInitialState();
+    double GetReward(TState currentState, TAction action);
+    bool GoalStateIsReached(TState currentState);
 }

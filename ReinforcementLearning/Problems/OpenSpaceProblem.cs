@@ -10,54 +10,56 @@
 // | 8      | 9      | 10     | 11     |
 // |                                   |
 // |___  ___|___  ___|___  ___|___  ___|
-public class OpenSpaceProblem : IProblem
+public class OpenSpaceProblem : IProblem<int, int>
 {
-    private readonly int[][] _rewards =
+    private readonly Random _random = new();
+
+    private readonly double[][] _rewards =
     {
-        new[]
+        new double[]
         {
             -1, 0, -1, -1,
             0, -1, -1, -1,
             1, -1, -1, -1
         },
-        new[]
+        new double[]
         {
             0, -1, 0, -1,
             -1, 0, -1, -1,
             1, -1, -1, -1
         },
-        new[]
+        new double[]
         {
             -1, 0, -1, 0,
             -1, -1, 0, -1,
             1, -1, -1, -1
         },
-        new[]
+        new double[]
         {
             -1, -1, 0, -1,
             -1, -1, -1, 100,
             1, -1, -1, -1
         },
 
-        new[]
+        new double[]
         {
             0, -1, -1, -1,
             -1, 0, -1, -1,
             0, -1, -1, -1
         },
-        new[]
+        new double[]
         {
             -1, 0, -1, -1,
             0, -1, 0, -1,
             -1, 0, -1, -1
         },
-        new[]
+        new double[]
         {
             -1, -1, 0, -1,
             -1, 0, -1, 100,
             -1, -1, 0, -1
         },
-        new[]
+        new double[]
         {
             -1, -1, -1, 0,
             -1, -1, 0, -1,
@@ -65,25 +67,25 @@ public class OpenSpaceProblem : IProblem
         },
 
 
-        new[]
+        new double[]
         {
             -1, -1, -1, -1,
             0, -1, -1, -1,
             -1, 0, -1, -1
         },
-        new[]
+        new double[]
         {
             -1, -1, -1, -1,
             -1, 0, -1, -1,
             0, -1, 0, -1
         },
-        new[]
+        new double[]
         {
             -1, -1, -1, -1,
             -1, -1, 0, -1,
             -1, 0, -1, 0
         },
-        new[]
+        new double[]
         {
             -1, -1, -1, -1,
             -1, -1, -1, 100,
@@ -91,9 +93,13 @@ public class OpenSpaceProblem : IProblem
         },
     };
 
-    public int NumberOfStates => _rewards.Length;
+    public int[] States => new[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 };
+    public int[] Actions => new[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11 };
 
-    public int GetReward(int currentState, int action) =>
+    public int GetInitialState() =>
+        _random.Next(States.Length);
+
+    public double GetReward(int currentState, int action) =>
         _rewards[currentState][action];
 
     public int[] GetValidActions(int currentState)
@@ -107,7 +113,7 @@ public class OpenSpaceProblem : IProblem
 
         return validActions.ToArray();
     }
-    
+
     public bool GoalStateIsReached(int currentState) =>
         currentState == 7;
 }

@@ -2,22 +2,22 @@
 
 namespace ReinforcementLearning;
 
-public class QLearningStats
+public class QLearningStats<TState, TAction>
 {
-    private int InitialState { get; }
-    public List<int> Steps { get; }
+    private TState InitialState { get; }
+    public List<TAction> Actions { get; }
 
-    public QLearningStats(int initialState)
+    public QLearningStats(TState initialState)
     {
         InitialState = initialState;
-        Steps = new List<int>();
+        Actions = new List<TAction>();
     }
 
     public override string ToString()
     {
         var stringBuilder = new StringBuilder();
-        stringBuilder.AppendLine($"Agent needed {Steps.Count} steps to find the solution:");
-        stringBuilder.AppendLine($"Actions: {InitialState} -> {string.Join(" -> ", Steps)}");
+        stringBuilder.AppendLine($"Agent needed {Actions.Count} steps to find the solution:");
+        stringBuilder.AppendLine($"Actions: {InitialState} -> {string.Join(" -> ", Actions)}");
         return stringBuilder.ToString();
     }
 }

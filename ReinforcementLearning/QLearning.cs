@@ -2,36 +2,45 @@
 
 namespace ReinforcementLearning;
 
-public class QLearning
+public class QLearning<TState, TAction> where TState : notnull where TAction : notnull
 {
     private const double Gamma = 0.8;
     private readonly Random _random = new();
-    private readonly IProblem _problem;
+    private readonly IProblem<TState, TAction> _problem;
 
-    private double[][] QTable { get; }
+    private Dictionary<TState, Dictionary<TAction, double>> QTable { get; set; }
 
-    public QLearning(IProblem problem)
+    public QLearning(IProblem<TState, TAction> problem)
     {
         _problem = problem;
-        QTable = new double[problem.NumberOfStates][];
-        for (var i = 0; i < problem.NumberOfStates; i++)
-            QTable[i] = new double[problem.NumberOfStates];
+        InitializeQTable();
+    }
+
+    private void InitializeQTable()
+    {
+        QTable = new Dictionary<TState, Dictionary<TAction, double>>();
+        foreach (var state in _problem.States)
+        {
+            QTable[state] = new Dictionary<TAction, double>();
+            foreach (var action in _problem.Actions)
+                QTable[state][action] = 0;
+        }
     }
 
     public void TrainAgent(int numberOfIterations)
     {
         for (var i = 0; i < numberOfIterations; i++)
-            RunEpisode(GetInitialState(_problem.NumberOfStates));
+            RunEpisode(_problem.GetInitialState());
     }
 
-    public object Run(int initialState)
+    public QLearningStats<TState, TAction> Run(TState initialState)
     {
-        var qLearningStats = new QLearningStats(initialState);
+        var qLearningStats = new QLearningStats<TState, TAction>(initialState);
         var currentState = initialState;
         while (!_problem.GoalStateIsReached(currentState))
         {
             var action = GetBestAction(currentState);
-            qLearningStats.Steps.Add(action);
+            qLearningStats.Actions.Add(action);
             Learn(currentState, action);
             currentState = action;
         }
@@ -41,53 +50,46 @@ public class QLearning
 
     public double[][] GetNormalizedQTable()
     {
-        var max = QTable.SelectMany(value => value).Max();
-        return QTable.Select(row => row.Select(value => value / max).ToArray()).ToArray();
+        var max = QTable.SelectMany(state => state.Value).MaxBy(action => action.Value).Value;
+        return QTable.Select(state => state.Value.Select(action => action.Value / max).ToArray()).ToArray();
     }
 
-    private int GetInitialState(object numberOfStates) =>
-        _random.Next((int)numberOfStates);
-
-    private void RunEpisode(int initialState)
+    private void RunEpisode(TState initialState)
     {
         var currentState = initialState;
         while (true)
         {
-            currentState = TakeAction(currentState);
+            currentState = ChooseAction(currentState);
             if (_problem.GoalStateIsReached(currentState))
                 break;
         }
     }
 
-    private int TakeAction(int currentState)
+    private TState ChooseAction(TState currentState)
     {
-        var action = GetRandomAction(currentState);
+        var action = GetRandomAction();
         Learn(currentState, action);
         return action;
     }
 
-    private int GetRandomAction(int currentState)
-    {
-        var validActions = _problem.GetValidActions(currentState);
-        return validActions[_random.Next(0, validActions.Length)];
-    }
+    private TAction GetRandomAction() =>
+        _problem.Actions[_random.Next(0, _problem.Actions.Length)];
 
-    private int GetBestAction(int currentState)
+    private TAction GetBestAction(TState currentState)
     {
-        var states = QTable[currentState].Select((value, index) => new { Value = value, Index = index })
-            .Where(state => state.Value != 0)
+        var actions = QTable[currentState]
             .OrderByDescending(state => state.Value)
             .ToArray();
-        if (!states.Any())
-            return GetRandomAction(currentState);
-        var max = states[0].Value;
-        return states.Where(state => Math.Abs(state.Value - max) < 0.1).MinBy(_ => Guid.NewGuid())!.Index;
+        if (!actions.Any())
+            return GetRandomAction();
+        var max = actions[0].Value;
+        return actions.Where(state => Math.Abs(state.Value - max) < 0.1).MinBy(_ => Guid.NewGuid()).Key;
     }
 
-    private void Learn(int currentState, int action)
+    private void Learn(TState currentState, TAction action)
     {
-        double saReward = _problem.GetReward(currentState, action);
-        var nsReward = QTable[action].Max();
+        var saReward = _problem.GetReward(currentState, action);
+        var nsReward = QTable[currentState].MaxBy(state => state.Value).Value;
         var qCurrentState = saReward + Gamma * nsReward;
         QTable[currentState][action] = qCurrentState;
     }
